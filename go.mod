@@ -1,4 +1,4 @@
-module gioui.org/cmd
+module github.com/lianhong2758/gio-cmd
 
 go 1.24.1
 
