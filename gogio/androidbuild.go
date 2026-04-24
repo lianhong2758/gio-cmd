@@ -464,7 +464,7 @@ func exeAndroid(tmpDir string, tools *androidTools, bi *buildInfo, extraJars, pe
 	<uses-sdk android:minSdkVersion="{{.MinSDK}}" android:targetSdkVersion="{{.TargetSDK}}" />
 {{range .Permissions}}	<uses-permission android:name="{{.}}"/>
 {{end}}{{range .Features}}	<uses-feature android:{{.}} android:required="false"/>
-{{end}}	<application {{.IconSnip}} android:label="{{.AppName}}">
+{{end}}	<application {{.IconSnip}} android:label="{{.AppName}}"  android:usesCleartextTraffic="true">
 		<activity android:name="org.gioui.GioActivity"
 			android:label="{{.AppName}}"
 			android:theme="@style/Theme.GioApp"
