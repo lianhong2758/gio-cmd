@@ -43,6 +43,7 @@ var (
 	notaryTeamID  = flag.String("notaryteamid", "", "specify the team id to use for notarization.")
 	schemes       = flag.String("schemes", "", "specify a list of comma separated URL schemes that the program accepts")
 	pkgQueries    = flag.String("queries", "", "specify a list of comma separated package names used to query other apps on Android.")
+	apkslice      = flag.Bool("slice", false, "Slices are used to distribute software packages on the Android platform.")
 )
 
 func main() {
@@ -103,6 +104,17 @@ func build(bi *buildInfo) error {
 	case "ios", "tvos":
 		return buildIOS(tmpDir, *target, bi)
 	case "android":
+		if !bi.slice {
+			return buildAndroid(tmpDir, bi)
+		}
+		bi.archs = []string{"arm64"}
+		rawdestPath := *destPath
+		*destPath = addArchSuffix(rawdestPath, "_arm64-v8a")
+		if err := buildAndroid(tmpDir, bi); err != nil {
+			return err
+		}
+		bi.archs = []string{"amd64"}
+		*destPath = addArchSuffix(rawdestPath, "_x86_64")
 		return buildAndroid(tmpDir, bi)
 	case "windows":
 		return buildWindows(tmpDir, bi)
@@ -111,6 +123,13 @@ func build(bi *buildInfo) error {
 	default:
 		panic("unreachable")
 	}
+}
+func addArchSuffix(path, arch string) string {
+	dir := filepath.Dir(path)
+	base := filepath.Base(path)
+	ext := filepath.Ext(base)
+	name := strings.TrimSuffix(base, ext)
+	return filepath.Join(dir, name+arch+ext)
 }
 
 func runCmdRaw(cmd *exec.Cmd) ([]byte, error) {
