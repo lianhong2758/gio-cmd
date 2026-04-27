@@ -104,8 +104,8 @@ func build(bi *buildInfo) error {
 	case "ios", "tvos":
 		return buildIOS(tmpDir, *target, bi)
 	case "android":
-		if !bi.slice {
-			return buildAndroid(tmpDir, bi)
+		if err := buildAndroid(tmpDir, bi); err != nil || !bi.slice {
+			return err
 		}
 		bi.archs = []string{"arm64"}
 		rawdestPath := *destPath
