@@ -448,6 +448,8 @@ func exeAndroid(tmpDir string, tools *androidTools, bi *buildInfo, extraJars, pe
 		Schemes:        bi.schemes,
 		PackageQueries: bi.packageQueries,
 	}
+	// android:usesCleartextTraffic="true" 允许访问http
+	// android:requestLegacyExternalStorage="true" 允许访问外部存储权限
 	tmpl, err := template.New("test").Parse(
 		`<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -468,6 +470,7 @@ func exeAndroid(tmpDir string, tools *androidTools, bi *buildInfo, extraJars, pe
 		<activity android:name="org.gioui.GioActivity"
 			android:label="{{.AppName}}"
 			android:theme="@style/Theme.GioApp"
+			android:requestLegacyExternalStorage="true"
 			android:configChanges="screenSize|screenLayout|smallestScreenSize|orientation|keyboardHidden"
 			android:windowSoftInputMode="adjustResize"
 			android:launchMode="singleInstance"
